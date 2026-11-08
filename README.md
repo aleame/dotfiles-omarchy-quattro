@@ -6,7 +6,8 @@
 [![Shell: Zsh](https://img.shields.io/badge/Shell-Zsh-F15A24?style=for-the-badge&logo=zsh&logoColor=white)](https://www.zsh.org)
 [![Terminal: Alacritty](https://img.shields.io/badge/Terminal-Alacritty-F46D01?style=for-the-badge&logo=alacritty&logoColor=white)](https://alacritty.org)
 
-![Desktop screenshot: Fastfetch and Cava in Alacritty under the Omarchy bar](docs/screenshot.png)
+![Desktop screenshot: Fastfetch in Kitty under the Omarchy bar](docs/screenshot_02.png)
+![Desktop screenshot: Cava in Foot under the Omarchy bar](docs/screenshot_01.png)
 
 Personal Hyprland (Lua config) and Omarchy shell bar setup for Omarchy 4.5
 "Quattro" (Hyprland 0.56). Files under `home/` mirror their place in `$HOME`.
