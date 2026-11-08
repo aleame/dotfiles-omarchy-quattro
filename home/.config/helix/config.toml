@@ -1,0 +1,5 @@
+theme="my_theme"
+
+[keys.normal]
+C-s = ":w" # Maps Ctrl-s to the typable command :w which is an alias for :write (save file)
+ins = "insert_mode" # Maps Insert key to edit

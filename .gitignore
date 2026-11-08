@@ -1,0 +1,3 @@
+# Private files that must never be committed.
+.zshrc.secrets
+.zsh_history

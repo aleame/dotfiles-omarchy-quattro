@@ -1,0 +1,118 @@
+{
+  "bar": {
+    "background": "opaque",
+    "id": "alex.bar",
+    "layout": {
+      "center": [],
+      "centerBegin": [
+        {
+          "format": "ddd d MMM HH:mm",
+          "formatAlt": "d MMMM 'W'ww yyyy",
+          "id": "alex.clock",
+          "verticalFormat": "HH\n—\nmm"
+        },
+        {
+          "id": "alex.weather"
+        }
+      ],
+      "centerEnd": [
+        {
+          "id": "omarchy.system-update"
+        }
+      ],
+      "left": [
+        {
+          "id": "omarchy.menu"
+        },
+        {
+          "id": "alex.workspaces"
+        },
+        {
+          "id": "taskbar",
+          "type": "qml"
+        },
+        {
+          "id": "omarchy.indicators",
+          "items": [
+            "ScreenRecording",
+            "RemoteSession",
+            "Dnd",
+            "StayAwake"
+          ]
+        }
+      ],
+      "right": [
+        {
+          "id": "cava",
+          "type": "qml"
+        },
+        {
+          "id": "omarchy.tray"
+        },
+        {
+          "id": "omarchy.keyboard-layout"
+        },
+        {
+          "exec": "~/.config/omarchy/bar/scripts/system-stat gpu",
+          "id": "gpu",
+          "interval": 3,
+          "onClick": "missioncenter",
+          "type": "command"
+        },
+        {
+          "exec": "~/.config/omarchy/bar/scripts/system-stat cpu",
+          "id": "cpu",
+          "interval": 5,
+          "onClick": "omarchy-launch-or-focus-tui btop",
+          "type": "command"
+        },
+        {
+          "exec": "~/.config/omarchy/bar/scripts/system-stat ram",
+          "id": "ram",
+          "interval": 5,
+          "type": "command"
+        },
+        {
+          "id": "omarchy.agents"
+        },
+        {
+          "id": "omarchy.bluetooth"
+        },
+        {
+          "id": "omarchy.network"
+        },
+        {
+          "id": "omarchy.audio"
+        },
+        {
+          "id": "omarchy.monitor"
+        },
+        {
+          "id": "omarchy.power"
+        }
+      ],
+      "tray": [
+        {
+          "id": "superwhisper.panel"
+        }
+      ]
+    },
+    "position": "top"
+  },
+  "dock": {
+    "autohide": true,
+    "pinned": [
+      "brave-browser",
+      "Alacritty",
+      "nemo",
+      "codium"
+    ],
+    "position": "bottom"
+  },
+  "idle": {
+    "lock": 900,
+    "screensaver": 450
+  },
+  "plugins": [],
+  "version": 1
+}

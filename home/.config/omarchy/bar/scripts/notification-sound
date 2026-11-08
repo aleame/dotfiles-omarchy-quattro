@@ -1,0 +1,19 @@
+#!/bin/bash
+# Plays a sound for each new notification, unless notifications are silenced.
+# Run by ~/.config/systemd/user/notification-sound.service.
+
+sound="$HOME/.config/omarchy/sounds/notification.wav"
+last=-1
+
+dbus-monitor --session "type='method_call',interface='org.freedesktop.Notifications',member='Notify'" |
+  while read -r line; do
+    [[ $line == "method call "*"member=Notify"* ]] || continue
+
+    # A burst of notifications plays once rather than piling up.
+    (( last >= 0 && SECONDS - last < 1 )) && continue
+
+    [[ $(/usr/share/omarchy/bin/omarchy-shell notifications isDnd 2>/dev/null) == on ]] && continue
+
+    last=$SECONDS
+    paplay "$sound" >/dev/null 2>&1 &
+  done

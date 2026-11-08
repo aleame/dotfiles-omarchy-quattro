@@ -1,0 +1,130 @@
+// Load with --load-config examples/2.jsonc
+// Note that you must replace the image path to an existing image to display it.
+
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "padding": {
+            "top": 1
+        }
+    },
+    "display": {
+        "separator": " 🡪 "
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "format": "\u001b[90m┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
+        },
+        {
+            "type": "title",
+            "keyWidth": 10
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+        },
+        {
+            "type": "custom",
+            "format": " \u001b[90m  \u001b[31m  \u001b[32m  \u001b[33m  \u001b[34m  \u001b[35m  \u001b[36m  \u001b[37m  \u001b[38m  \u001b[39m       \u001b[38m  \u001b[37m  \u001b[36m  \u001b[35m  \u001b[34m  \u001b[33m  \u001b[32m  \u001b[31m  \u001b[90m"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
+        },
+        {
+            "type": "os",
+            "key": "\uf1d6 OS",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "kernel",
+            "key": "┃ ┣",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "packages",
+            "key": "┃ ┣󰏖",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "shell",
+            "key": "┃ ┗",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "wm",
+            "key": " DE/WM",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "lm",
+            "key": "┃ ┣󰧨",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "wmtheme",
+            "key": "┃ ┣󰉼",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "icons",
+            "key": "┃ ┣󰀻",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "terminal",
+            "key": "┃ ┣",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "wallpaper",
+            "key": "┃ ┗󰸉",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "host",
+            "key": "\uf109 PC",
+            "keyColor": "green"
+        },
+        {
+            "type": "cpu",
+            "key": "┃ ┣\uf4bc",
+            "keyColor": "green"
+        },
+        {
+            "type": "gpu",
+            "key": "┃ ┣󱀚",
+            "keyColor": "green"
+        },
+        {
+            "type": "memory",
+            "key": "┃ ┣\ue266",
+            "keyColor": "green"
+        },
+        {
+            "type": "swap",
+            "key": "┃ ┣󰯍",
+            "keyColor": "green"
+        },
+        {
+            "type": "display",
+            "key": "┃ ┣󰍹",
+            "keyColor": "green"
+        },
+        {
+            "type": "uptime",
+            "key": "┃ ┗󰅐",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": " \u001b[90m  \u001b[31m  \u001b[32m  \u001b[33m  \u001b[34m  \u001b[35m  \u001b[36m  \u001b[37m  \u001b[38m  \u001b[39m       \u001b[38m  \u001b[37m  \u001b[36m  \u001b[35m  \u001b[34m  \u001b[33m  \u001b[32m  \u001b[31m  \u001b[90m"
+        }
+    ]
+}

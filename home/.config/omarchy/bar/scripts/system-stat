@@ -1,0 +1,75 @@
+#!/bin/bash
+# Bar stats, as Waybar-style JSON: system-stat cpu|gpu|ram
+# Sensors are found by driver name, since hwmon numbers change between boots.
+# A missing reading shows as "--" rather than a made-up value.
+
+hwmon() {
+  local dir
+  for dir in /sys/class/hwmon/hwmon*; do
+    [[ $(<"$dir/name") == "$1" ]] && { echo "$dir"; return; }
+  done
+}
+
+# Degrees from the input with this label in a hwmon directory.
+temp() {
+  local label
+  for label in "$1"/temp*_label; do
+    if [[ -r $label && $(<"$label") == "$2" ]]; then
+      echo $(( $(<"${label%_label}_input") / 1000 ))
+      return
+    fi
+  done
+  echo "--"
+}
+
+# active is the bar's one highlight color: used for critical levels only.
+print() { # text tooltip critical
+  printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' "$1" "$2" "$([[ $3 == 1 ]] && echo active || echo normal)"
+}
+
+at_least() { [[ $1 =~ ^[0-9]+$ ]] && (( $1 >= $2 )) && echo 1 || echo 0; }
+
+cpu() {
+  local _ user nice system idle iowait irq softirq steal total1 idle1 total2 idle2
+  read -r _ user nice system idle iowait irq softirq steal _ </proc/stat
+  total1=$((user + nice + system + idle + iowait + irq + softirq + steal)); idle1=$((idle + iowait))
+  sleep 0.5
+  read -r _ user nice system idle iowait irq softirq steal _ </proc/stat
+  total2=$((user + nice + system + idle + iowait + irq + softirq + steal)); idle2=$((idle + iowait))
+
+  local usage=0
+  (( total2 > total1 )) && usage=$(( 100 * ((total2 - total1) - (idle2 - idle1)) / (total2 - total1) ))
+
+  local degrees model
+  degrees=$(temp "$(hwmon k10temp)" Tctl)
+  model=$(sed -n 's/^model name[[:space:]]*: //p;T;q' /proc/cpuinfo)
+
+  print "CPU ${usage}% ${degrees}°C" "${model}\\nUsage: ${usage}%\\nTemperature: ${degrees}°C" "$(at_least "$degrees" 85)"
+}
+
+gpu() {
+  local dir usage="--" edge junction mem vram=""
+  dir=$(hwmon amdgpu)
+  [[ -r $dir/device/gpu_busy_percent ]] && usage=$(<"$dir/device/gpu_busy_percent")
+  edge=$(temp "$dir" edge); junction=$(temp "$dir" junction); mem=$(temp "$dir" mem)
+
+  if [[ -r $dir/device/mem_info_vram_used && -r $dir/device/mem_info_vram_total ]]; then
+    vram="\\nVideo memory used: $(( $(<"$dir/device/mem_info_vram_used") / 1048576 )) of $(( $(<"$dir/device/mem_info_vram_total") / 1048576 )) MiB"
+  fi
+
+  print "GPU ${usage}% ${edge}°C" "Usage: ${usage}%\\nEdge: ${edge}°C\\nJunction: ${junction}°C\\nVideo memory temperature: ${mem}°C${vram}" "$(at_least "$edge" 85)"
+}
+
+ram() {
+  local total available
+  total=$(sed -n 's/^MemTotal: *\([0-9]*\).*/\1/p' /proc/meminfo)
+  available=$(sed -n 's/^MemAvailable: *\([0-9]*\).*/\1/p' /proc/meminfo)
+  local used=$((total - available)) usage=$(( 100 * (total - available) / total ))
+
+  print "RAM ${usage}%" "Used: $(( (used + 524288) / 1048576 )) of $(( (total + 524288) / 1048576 )) GiB (no RAM temperature sensor)" "$(at_least "$usage" 90)"
+}
+
+case "${1:-}" in
+  cpu | gpu | ram) "$1" ;;
+  *) echo "usage: system-stat cpu|gpu|ram" >&2; exit 1 ;;
+esac

@@ -1,0 +1,100 @@
+#!/usr/bin/python3 -I
+"""Events from the GNOME calendar store, as JSON keyed by local date.
+
+    calendar-events YYYY-MM-DD DAYS
+
+Prints {"YYYY-MM-DD": [{"title", "start", "end", "allDay", "calendar"}, ...]}.
+Read-only. Reads what is already synced, so it never waits on the network.
+"""
+import datetime
+import json
+import sys
+
+import gi
+
+gi.require_version("EDataServer", "1.2")
+gi.require_version("ECal", "2.0")
+gi.require_version("ICalGLib", "4.0")
+from gi.repository import ECal, EDataServer, ICalGLib
+
+MAX_TITLE = 200  # Calendars come from outside: bound what reaches the bar.
+MAX_PER_DAY = 40
+MAX_SPAN_DAYS = 31
+
+
+def local_datetime(value):
+    zone = value.get_timezone()
+    if zone is not None:
+        return datetime.datetime.fromtimestamp(value.as_timet_with_zone(zone))
+    if value.is_utc():
+        return datetime.datetime.fromtimestamp(value.as_timet())
+    return datetime.datetime(
+        value.get_year(), value.get_month(), value.get_day(),
+        value.get_hour(), value.get_minute(), value.get_second())
+
+
+def clean(text, limit):
+    text = "".join(c if c.isprintable() else " " for c in str(text or ""))
+    return text.strip()[:limit]
+
+
+def read_source(source, first, last, days):
+    # Seconds to wait for a calendar to come online. 0 waits forever.
+    client = ECal.Client.connect_sync(source, ECal.ClientSourceType.EVENTS, 1, None)
+    calendar = clean(source.get_display_name(), 60)
+
+    def on_instance(component, start, end, *_):
+        if component.get_status() == ICalGLib.PropertyStatus.CANCELLED:
+            return True
+
+        all_day = start.is_date()
+        begin = local_datetime(start)
+        finish = local_datetime(end)
+        # An all-day event's end is the day after its last.
+        last_day = finish.date()
+        if last_day > begin.date() and (all_day or finish.time() == datetime.time(0)):
+            last_day -= datetime.timedelta(days=1)
+        last_day = min(last_day, begin.date() + datetime.timedelta(days=MAX_SPAN_DAYS))
+
+        event = {
+            "title": clean(component.get_summary(), MAX_TITLE) or "(no title)",
+            "start": "" if all_day else begin.strftime("%H:%M"),
+            "end": "" if all_day else finish.strftime("%H:%M"),
+            "allDay": all_day,
+            "calendar": calendar,
+        }
+        day = begin.date()
+        while day <= last_day:
+            if first <= day <= last:
+                days.setdefault(day.isoformat(), []).append(event)
+            day += datetime.timedelta(days=1)
+        return True
+
+    from_time = datetime.datetime.combine(first, datetime.time(0)).timestamp()
+    until_time = datetime.datetime.combine(last + datetime.timedelta(days=1), datetime.time(0)).timestamp()
+    client.generate_instances_sync(int(from_time), int(until_time), None, on_instance)
+
+
+def main():
+    first = datetime.date.fromisoformat(sys.argv[1])
+    count = max(1, min(int(sys.argv[2]), 62))
+    last = first + datetime.timedelta(days=count - 1)
+
+    days = {}
+    registry = EDataServer.SourceRegistry.new_sync(None)
+    for source in registry.list_sources(EDataServer.SOURCE_EXTENSION_CALENDAR):
+        if not source.get_enabled():
+            continue
+        try:
+            read_source(source, first, last, days)
+        except Exception as error:  # One broken calendar shouldn't hide the rest.
+            print(f"{source.get_display_name()}: {error}", file=sys.stderr)
+
+    for key, events in days.items():
+        events.sort(key=lambda e: (not e["allDay"], e["start"], e["title"]))
+        days[key] = events[:MAX_PER_DAY]
+    print(json.dumps(days, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

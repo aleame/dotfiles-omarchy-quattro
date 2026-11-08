@@ -1,0 +1,4 @@
+# Author : nuid32 <lvkuzvesov@proton.me>
+
+inherits = "snazzy"
+"ui.background" = { }

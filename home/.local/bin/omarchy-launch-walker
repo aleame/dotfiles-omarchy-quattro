@@ -1,0 +1,4 @@
+#!/bin/bash
+# Walker was removed in Omarchy Quattro. This keeps the old command working by
+# opening Quattro's built-in app launcher (the same one as SUPER+ALT+SPACE).
+exec omarchy-shell omarchy.dock apps
