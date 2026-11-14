@@ -1,3 +1,6 @@
+
+
+
 # Dotfiles 📁
 
 My personal dotfiles for Omarchy 4.5 "Quattro" (Hyprland 0.56, Lua config). 🐧
@@ -15,6 +18,9 @@ These dotfiles are configured for [Omarchy](https://omarchy.org/), a Linux distr
 - **GitHub**: https://github.com/basecamp/omarchy
 
 ## Media 🎥
+
+### Video demo
+https://github.com/user-attachments/assets/a3cc7732-6ec2-41e4-a2a5-9f09f42a83fc
 
 ### Screenshots
 <div align="center">
